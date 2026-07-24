@@ -1,0 +1,598 @@
+{
+  "version": "2.14",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "Win Readme Workspace",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#F6F8FA",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "npBdI",
+          "x": 0,
+          "y": 0,
+          "name": "File Explorer",
+          "width": 220,
+          "height": 600,
+          "fill": "#FFFFFF",
+          "stroke": "#D0D7DE",
+          "strokeWidth": {
+            "right": 1
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "w78Ad",
+              "x": 0,
+              "y": 0,
+              "name": "Explorer Header",
+              "width": 220,
+              "height": 40,
+              "fill": "#FFFFFF",
+              "stroke": "#D0D7DE",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "MHtMH",
+                  "x": 12,
+                  "y": 12,
+                  "name": "Workspace Folder Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "folder-open",
+                  "library": "lucide",
+                  "fill": "#24292F"
+                },
+                {
+                  "type": "text",
+                  "id": "eljjk",
+                  "x": 36,
+                  "y": 12,
+                  "name": "Workspace Name",
+                  "fill": "#24292F",
+                  "content": "README workspace",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "H1ns8",
+              "x": 10,
+              "y": 52,
+              "name": "Root Chevron",
+              "width": 14,
+              "height": 14,
+              "icon": "chevron-down",
+              "library": "lucide",
+              "fill": "#57606A"
+            },
+            {
+              "type": "icon",
+              "id": "p81aqo",
+              "x": 28,
+              "y": 51,
+              "name": "Root Folder",
+              "width": 15,
+              "height": 15,
+              "icon": "folder-open",
+              "library": "lucide",
+              "fill": "#24292F"
+            },
+            {
+              "type": "text",
+              "id": "pII8Q",
+              "x": 50,
+              "y": 51,
+              "name": "Root Folder Name",
+              "fill": "#24292F",
+              "content": "win-readme",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "600"
+            },
+            {
+              "type": "icon",
+              "id": "vmsif",
+              "x": 26,
+              "y": 82,
+              "name": "Src Chevron",
+              "width": 14,
+              "height": 14,
+              "icon": "chevron-down",
+              "library": "lucide",
+              "fill": "#57606A"
+            },
+            {
+              "type": "icon",
+              "id": "htbNP",
+              "x": 44,
+              "y": 81,
+              "name": "Src Folder",
+              "width": 15,
+              "height": 15,
+              "icon": "folder-open",
+              "library": "lucide",
+              "fill": "#24292F"
+            },
+            {
+              "type": "text",
+              "id": "jf0OG",
+              "x": 66,
+              "y": 81,
+              "name": "Src Folder Name",
+              "fill": "#24292F",
+              "content": "src",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "jd7y1",
+              "x": 58,
+              "y": 111,
+              "name": "App File Icon",
+              "width": 14,
+              "height": 14,
+              "icon": "file-text",
+              "library": "lucide",
+              "fill": "#0969DA"
+            },
+            {
+              "type": "text",
+              "id": "xAFrr",
+              "x": 80,
+              "y": 111,
+              "name": "App File Name",
+              "fill": "#24292F",
+              "content": "App.tsx",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "cfXYg",
+              "x": 58,
+              "y": 139,
+              "name": "Styles File Icon",
+              "width": 14,
+              "height": 14,
+              "icon": "file-text",
+              "library": "lucide",
+              "fill": "#0969DA"
+            },
+            {
+              "type": "text",
+              "id": "NDooA",
+              "x": 80,
+              "y": 139,
+              "name": "Styles File Name",
+              "fill": "#24292F",
+              "content": "styles.css",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "Mkfvv",
+              "x": 26,
+              "y": 169,
+              "name": "Components Chevron",
+              "width": 14,
+              "height": 14,
+              "icon": "chevron-down",
+              "library": "lucide",
+              "fill": "#57606A"
+            },
+            {
+              "type": "icon",
+              "id": "qtFQx",
+              "x": 44,
+              "y": 168,
+              "name": "Components Folder",
+              "width": 15,
+              "height": 15,
+              "icon": "folder-open",
+              "library": "lucide",
+              "fill": "#24292F"
+            },
+            {
+              "type": "text",
+              "id": "QTJ4f",
+              "x": 66,
+              "y": 168,
+              "name": "Components Folder Name",
+              "fill": "#24292F",
+              "content": "components",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "EDhz1",
+              "x": 58,
+              "y": 198,
+              "name": "Editor File Icon",
+              "width": 14,
+              "height": 14,
+              "icon": "file-text",
+              "library": "lucide",
+              "fill": "#0969DA"
+            },
+            {
+              "type": "text",
+              "id": "p1pUk",
+              "x": 80,
+              "y": 198,
+              "name": "Editor File Name",
+              "fill": "#24292F",
+              "content": "Editor.tsx",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "icon",
+              "id": "F685x",
+              "x": 58,
+              "y": 226,
+              "name": "Preview File Icon",
+              "width": 14,
+              "height": 14,
+              "icon": "file-text",
+              "library": "lucide",
+              "fill": "#0969DA"
+            },
+            {
+              "type": "text",
+              "id": "DOFC1",
+              "x": 80,
+              "y": 226,
+              "name": "Preview File Name",
+              "fill": "#24292F",
+              "content": "Preview.tsx",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "djNOG",
+          "x": 220,
+          "y": 0,
+          "name": "Main Workspace",
+          "width": 580,
+          "height": 600,
+          "fill": "#F6F8FA",
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "i53nMv",
+              "x": 0,
+              "y": 0,
+              "name": "Document Tabs",
+              "width": 580,
+              "height": 36,
+              "fill": "#FFFFFF",
+              "stroke": "#D0D7DE",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "k2byY",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Active README Tab",
+                  "width": 154,
+                  "height": 36,
+                  "fill": "#F6F8FA",
+                  "stroke": "#D0D7DE",
+                  "strokeWidth": {
+                    "right": 1,
+                    "bottom": 2
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "O66XV",
+                      "x": 12,
+                      "y": 11,
+                      "name": "Active Tab Label",
+                      "fill": "#24292F",
+                      "content": "README.md",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "YkDKM",
+                      "x": 112,
+                      "y": 14,
+                      "name": "Dirty Indicator",
+                      "fill": "#CF222E",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "icon",
+                      "id": "pXXHe",
+                      "x": 132,
+                      "y": 11,
+                      "name": "Close README Tab",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "#57606A"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lUGcm",
+                  "x": 154,
+                  "y": 0,
+                  "name": "Secondary Package Tab",
+                  "width": 138,
+                  "height": 36,
+                  "fill": "#FFFFFF",
+                  "stroke": "#D0D7DE",
+                  "strokeWidth": {
+                    "right": 1
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lcQFB",
+                      "x": 12,
+                      "y": 11,
+                      "name": "Secondary Tab Label",
+                      "fill": "#57606A",
+                      "content": "package.json",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "M0zBW",
+                      "x": 116,
+                      "y": 11,
+                      "name": "Close Package Tab",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "x",
+                      "library": "lucide",
+                      "fill": "#8C959F"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bETra",
+              "x": 0,
+              "y": 36,
+              "name": "Editor Preview Panes",
+              "width": 580,
+              "height": 564,
+              "fill": "#FFFFFF",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aAV6A",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Markdown Editor",
+                  "width": 286,
+                  "height": 564,
+                  "fill": "#FFFFFF",
+                  "stroke": "#D0D7DE",
+                  "strokeWidth": {
+                    "right": 1
+                  },
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "USTo2",
+                      "x": 12,
+                      "y": 16,
+                      "name": "Line Numbers",
+                      "fill": "#8C959F",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "01\n02\n03\n04\n05\n06\n07\n08\n09\n10\n11\n12\n13\n14\n15\n16\n17\n18",
+                      "lineHeight": 1.55,
+                      "textAlign": "right",
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LwLnG",
+                      "x": 48,
+                      "y": 16,
+                      "name": "Markdown Source",
+                      "fill": "#24292F",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "# Win Readme\n\nA lightweight desktop\nMarkdown workspace.\n\n## Features\n\n- Browse project files\n- Edit Markdown instantly\n- Preview rendered output\n\n> Pick a folder to get\n> started.",
+                      "lineHeight": 1.55,
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "h9ZN3B",
+                  "x": 286,
+                  "y": 0,
+                  "name": "Markdown Preview",
+                  "width": 294,
+                  "height": 564,
+                  "fill": "#FFFFFF",
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "FpY6q",
+                      "x": 24,
+                      "y": 22,
+                      "name": "Preview H1",
+                      "fill": "#24292F",
+                      "content": "Win Readme",
+                      "fontFamily": "Inter",
+                      "fontSize": 24,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "yI0EJ",
+                      "x": 24,
+                      "y": 59,
+                      "name": "Preview H1 Divider",
+                      "fill": "#D0D7DE",
+                      "width": 246,
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "ysSpz",
+                      "x": 24,
+                      "y": 78,
+                      "name": "Preview Intro",
+                      "fill": "#57606A",
+                      "textGrowth": "fixed-width",
+                      "width": 246,
+                      "content": "A lightweight desktop Markdown workspace.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ydB6N",
+                      "x": 24,
+                      "y": 132,
+                      "name": "Preview H2",
+                      "fill": "#24292F",
+                      "content": "Features",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "f4Dyh",
+                      "x": 24,
+                      "y": 160,
+                      "name": "Feature Rule",
+                      "fill": "#D0D7DE",
+                      "width": 246,
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "SUqwb",
+                      "x": 32,
+                      "y": 178,
+                      "name": "Feature List",
+                      "fill": "#24292F",
+                      "textGrowth": "fixed-width",
+                      "width": 232,
+                      "content": "• Browse project files\n• Edit Markdown instantly\n• Preview rendered output",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZcCCX",
+                      "x": 24,
+                      "y": 256,
+                      "name": "Preview Quote",
+                      "width": 246,
+                      "height": 64,
+                      "fill": "#F6F8FA",
+                      "stroke": "#D0D7DE",
+                      "strokeWidth": {
+                        "left": 3
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "c31etS",
+                          "x": 14,
+                          "y": 14,
+                          "name": "Quote Text",
+                          "fill": "#57606A",
+                          "textGrowth": "fixed-width",
+                          "width": 210,
+                          "content": "Pick a folder to get\nstarted.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal",
+                          "fontStyle": "italic"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "CaAW7",
+                      "x": 24,
+                      "y": 526,
+                      "name": "Preview Footer",
+                      "fill": "#8C959F",
+                      "content": "Rendered from README.md",
+                      "fontFamily": "Geist Mono",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fileToken": "875ad1ea-c92d-400d-8ae9-3e5546f8f604"
+}
