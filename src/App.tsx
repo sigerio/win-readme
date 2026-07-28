@@ -619,7 +619,12 @@ function App() {
                             </span>
                             <Eye size={13} />
                           </header>
-                          {pane.activeTabId && <Preview docId={pane.activeTabId} />}
+                          {pane.activeTabId && (
+                            <Preview
+                              docId={pane.activeTabId}
+                              scrollRef={pane.activeTabId === activeId ? previewRef : undefined}
+                            />
+                          )}
                         </section>
                       </Fragment>
                     ))}

@@ -1246,10 +1246,6 @@ button:focus-visible,
     padding: 0;
   }
 
-  .outline-pane {
-    display: none;
-  }
-
   .markdown-body {
     padding-right: 32px;
     padding-left: 32px;

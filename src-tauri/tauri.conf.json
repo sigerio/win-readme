@@ -51,7 +51,6 @@
     ]
   },
   "productName": "win-readme",
-  "version": "0.1.0",
   "identifier": "com.example.win-readme",
   "plugins": {},
   "app": {

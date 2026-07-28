@@ -73,6 +73,15 @@ export function Editor({ onScroll, scrollRef }: EditorProps) {
     if (showMenu(event.currentTarget, rect.left + 20, rect.top + 20)) event.preventDefault();
   }
 
+  function handleKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
+    openKeyboardMenu(event);
+    if (event.nativeEvent.isComposing || (event.key !== "Home" && event.key !== "Enter")) return;
+    const element = event.currentTarget;
+    requestAnimationFrame(() => {
+      element.scrollLeft = 0;
+    });
+  }
+
   function apply(kind: "text" | "bg" | null, color: string | null) {
     if (!menu || !doc) return;
     const next = applyColor(doc.content, menu.start, menu.end, kind, color);
@@ -96,7 +105,7 @@ export function Editor({ onScroll, scrollRef }: EditorProps) {
         onChange={(e) => updateDoc(doc.id, e.target.value)}
         onScroll={onScroll}
         onContextMenu={openMenu}
-        onKeyDown={openKeyboardMenu}
+        onKeyDown={handleKeyDown}
         aria-label={t("editing", { name: doc.name })}
         spellCheck={false}
         autoCapitalize="off"

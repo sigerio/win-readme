@@ -11,7 +11,9 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "build:win-installer": "bash scripts/build-windows-installer.sh"
+    "build:win-installer": "bash scripts/build-windows-installer.sh",
+    "version:bump": "node scripts/bump-version.mjs",
+    "hooks:install": "git config core.hooksPath .githooks"
   },
   "dependencies": {
     "@shikijs/rehype": "^1.0.0",
