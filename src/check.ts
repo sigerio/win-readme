@@ -259,6 +259,17 @@ assert(
     useDocStore.getState().docs[0].content === "unsaved",
     "Dirty documents must not be overwritten by reopening."
   );
+  s.reloadDoc("/tmp/reload/a.md", "v4");
+  assert(
+    useDocStore.getState().docs[0].content === "unsaved",
+    "Refreshing must not overwrite unsaved edits."
+  );
+  s.markClean("/tmp/reload/a.md", "unsaved");
+  s.reloadDoc("/tmp/reload/a.md", "v5");
+  assert(
+    useDocStore.getState().docs[0].content === "v5",
+    "Refreshing must update clean documents without reopening tabs."
+  );
 }
 
 // Lazy tree loading updates only the requested directory.

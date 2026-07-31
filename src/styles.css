@@ -340,6 +340,35 @@ button:focus-visible,
   cursor: default;
 }
 
+.sidebar-actions .refresh-button.refreshing svg {
+  animation: refresh-spin 0.7s linear infinite;
+}
+
+.sidebar-actions .refresh-button.refreshed {
+  color: var(--accent);
+  animation: refresh-complete 0.5s ease-out;
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes refresh-complete {
+  50% {
+    background: var(--accent-soft);
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-actions .refresh-button.refreshing svg,
+  .sidebar-actions .refresh-button.refreshed {
+    animation: none;
+  }
+}
+
 .workspace-header {
   height: 34px;
   flex: 0 0 34px;

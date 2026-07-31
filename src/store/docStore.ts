@@ -36,6 +36,7 @@ interface DocState {
   pendingAnchor: PendingAnchor | null;
   setActive: (id: string) => void;
   openDoc: (path: string, content: string) => void;
+  reloadDoc: (id: string, content: string) => void;
   updateDoc: (id: string, content: string) => void;
   closeDoc: (id: string) => void;
   markClean: (id: string, content: string) => void;
@@ -139,6 +140,13 @@ export const useDocStore = create<DocState>((set) => ({
       panes[focusIdx] = withTabActive(panes[focusIdx], id);
       return { docs, previewPanes: panes, focusedPane: focusIdx, activeId: id };
     }),
+
+  reloadDoc: (id, content) =>
+    set((state) => ({
+      docs: state.docs.map((doc) =>
+        doc.id === id && !doc.dirty ? { ...doc, content } : doc
+      ),
+    })),
 
   updateDoc: (id, content) =>
     set((state) => ({

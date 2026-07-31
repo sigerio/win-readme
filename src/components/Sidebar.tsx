@@ -262,9 +262,13 @@ export function Sidebar() {
   const setRoot = useDocStore((state) => state.setRoot);
   const refreshTree = useDocStore((state) => state.refreshTree);
   const openDoc = useDocStore((state) => state.openDoc);
+  const reloadDoc = useDocStore((state) => state.reloadDoc);
   const removePath = useDocStore((state) => state.removePath);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshComplete, setRefreshComplete] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const refreshCompleteTimer = useRef<number | null>(null);
 
   useEffect(() => {
     function closeMenu(event: MouseEvent) {
@@ -281,6 +285,13 @@ export function Sidebar() {
     };
   }, [menu]);
 
+  useEffect(
+    () => () => {
+      if (refreshCompleteTimer.current !== null) clearTimeout(refreshCompleteTimer.current);
+    },
+    []
+  );
+
   async function run(task: () => Promise<void>): Promise<boolean> {
     try {
       await task();
@@ -292,7 +303,28 @@ export function Sidebar() {
   }
 
   async function reload() {
-    if (rootPath) refreshTree(await loadDirectory(rootPath));
+    if (!rootPath) return;
+    const cleanDocs = docs.filter((doc) => !doc.dirty);
+    const [tree, loadedDocs] = await Promise.all([
+      loadDirectory(rootPath),
+      Promise.all(
+        cleanDocs.map(async (doc) => ({ id: doc.id, content: await openFile(doc.path) }))
+      ),
+    ]);
+    refreshTree(tree);
+    for (const doc of loadedDocs) reloadDoc(doc.id, doc.content);
+  }
+
+  async function refreshWorkspace() {
+    if (refreshing) return;
+    setRefreshing(true);
+    setRefreshComplete(false);
+    const refreshed = await run(reload);
+    setRefreshing(false);
+    if (!refreshed) return;
+    setRefreshComplete(true);
+    if (refreshCompleteTimer.current !== null) clearTimeout(refreshCompleteTimer.current);
+    refreshCompleteTimer.current = window.setTimeout(() => setRefreshComplete(false), 700);
   }
 
   async function openFolder() {
@@ -389,10 +421,14 @@ export function Sidebar() {
             <FolderPlus size={14} />
           </button>
           <button
-            title={t("refresh")}
-            aria-label={t("refresh")}
-            disabled={!rootPath}
-            onClick={() => void run(reload)}
+            className={`refresh-button${refreshing ? " refreshing" : ""}${
+              refreshComplete ? " refreshed" : ""
+            }`}
+            title={t(refreshing ? "refreshing" : refreshComplete ? "refreshed" : "refresh")}
+            aria-label={t(refreshing ? "refreshing" : refreshComplete ? "refreshed" : "refresh")}
+            aria-busy={refreshing}
+            disabled={!rootPath || refreshing}
+            onClick={() => void refreshWorkspace()}
           >
             <RefreshCw size={14} />
           </button>
