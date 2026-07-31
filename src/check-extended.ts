@@ -95,6 +95,16 @@ const store = () => useDocStore.getState();
   }
 }
 
+// ─── TOC: display math must not be parsed as a Setext heading ─
+{
+  const src = "# Clarke\n\n$$\n\\begin{bmatrix}\ni_\\alpha\\\\\\ni_\\beta\n\\end{bmatrix}\n$$\n\n## Park";
+  const toc = getMarkdownToc(src);
+  assert(
+    toc.map((item) => item.text).join("|") === "Clarke|Park",
+    `display math leaked into TOC: ${JSON.stringify(toc)}`
+  );
+}
+
 // ─── render: link hrefs survive sanitize (relative .md links must stay clickable) ─
 {
   const html = await renderMarkdown("[other](./other.md#section) and [ext](https://example.com)");

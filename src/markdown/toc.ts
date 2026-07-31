@@ -1,5 +1,6 @@
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 import type { Heading, RootContent } from "mdast";
 
@@ -10,7 +11,7 @@ export interface TocItem {
   text: string;
 }
 
-const parser = unified().use(remarkParse);
+const parser = unified().use(remarkParse).use(remarkMath);
 export const HEADING_ID_PREFIX = "user-content-";
 
 function nodeText(node: RootContent): string {
