@@ -304,7 +304,7 @@ export function Sidebar() {
 
   async function reload() {
     if (!rootPath) return;
-    const cleanDocs = docs.filter((doc) => !doc.dirty);
+    const cleanDocs = useDocStore.getState().docs.filter((doc) => !doc.dirty);
     const [tree, loadedDocs] = await Promise.all([
       loadDirectory(rootPath),
       Promise.all(
