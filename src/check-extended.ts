@@ -4,16 +4,34 @@ import { renderMarkdown } from "./markdown/render.ts";
 import { getMarkdownToc } from "./markdown/toc.ts";
 import { applyColor } from "./markdown/colors.ts";
 import { headingAnchorIds } from "./markdown/toc.ts";
+import { rememberWorkspace } from "./workspaceHistory.ts";
 
 function assert(cond: unknown, msg: string): asserts cond {
   if (!cond) throw new Error(msg);
 }
+
+assert(
+  rememberWorkspace(["/a", "/b", "/c", "/d", "/e"], "/c").join(",") ===
+    "/c,/a,/b,/d,/e",
+  "workspace history must move reopened paths to the front and keep five entries"
+);
 
 const store = () => useDocStore.getState();
 
 // ─── store: setActive routes to focused pane, finds existing tab in any pane ─
 {
   store().setRoot("/tmp/a", []);
+  store().addRoot("/tmp/b", [{ name: "README.md", path: "/tmp/b/README.md", isDirectory: false }]);
+  assert(
+    store().workspaceRoots.map((root) => root.path).join(",") === "/tmp/a,/tmp/b" &&
+      store().rootPath === "/tmp/b",
+    "opening a second folder must append it and make it active"
+  );
+  store().removeRoot("/tmp/b");
+  assert(
+    store().workspaceRoots.length === 1 && store().rootPath === "/tmp/a",
+    "closing a folder must leave the other workspace open"
+  );
   store().openDoc("/tmp/a/x.md", "x");
   store().openDoc("/tmp/a/y.md", "y");
   store().splitPreview("/tmp/a/x.md"); // left: [y], right: [x], focused=1

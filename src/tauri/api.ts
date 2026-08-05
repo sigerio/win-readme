@@ -66,6 +66,7 @@ const SKIP_DIRS = new Set([
 ]);
 
 export async function loadDirectory(path: string): Promise<FolderEntry[]> {
+  if (isTauri()) await invoke("scope_directory", { path });
   const result = (await readDir(path))
     .filter((entry) => !SKIP_DIRS.has(entry.name.toLowerCase()))
     .map((entry): FolderEntry => ({

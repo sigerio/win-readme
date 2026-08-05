@@ -470,7 +470,6 @@ function App() {
   return (
     <div className="app">
       <header className="app-bar">
-        <div className="brand" aria-hidden="true" />
         <div className="document-bar">
           <div className="breadcrumb" title={doc?.path || rootPath || ""}>
             <FileText size={15} />

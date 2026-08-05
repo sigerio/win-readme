@@ -94,16 +94,6 @@ button:focus-visible,
   user-select: none;
 }
 
-.brand {
-  width: 268px;
-  flex: 0 0 268px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px;
-  border-right: 1px solid #30333a;
-}
-
 .document-bar {
   min-width: 0;
   flex: 1;
@@ -298,7 +288,7 @@ button:focus-visible,
   flex: 0 0 44px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
   padding: 0 10px 0 14px;
   border-bottom: 1px solid var(--border-soft);
@@ -386,6 +376,34 @@ button:focus-visible,
   overflow: hidden;
 }
 
+.workspace-header.active {
+  color: #173c36;
+  background: #e5efec;
+}
+
+.workspace-toggle {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.workspace-close {
+  margin-left: auto;
+  padding: 2px;
+  color: #77818d;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.workspace-close:hover {
+  color: #b54848;
+}
+
 .workspace-header span {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -396,6 +414,72 @@ button:focus-visible,
   flex: 1;
   overflow: auto;
   padding: 6px;
+}
+
+.workspace-history {
+  padding: 4px 0 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.workspace-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 2px 8px 6px;
+  color: #606a76;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.workspace-history-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  color: #3f756b;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.workspace-history-open:hover:not(:disabled) {
+  background: #e9edf1;
+}
+
+.workspace-history-open:disabled {
+  color: #aeb5bf;
+  cursor: default;
+}
+
+.workspace-history-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  color: #343c46;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.workspace-history-item:hover {
+  background: #e9edf1;
+}
+
+.workspace-history-item input {
+  flex: 0 0 auto;
+  accent-color: var(--accent);
+}
+
+.workspace-history-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tree-node {

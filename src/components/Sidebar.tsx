@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useRef,
   useState,
@@ -14,8 +15,14 @@ import {
   FolderPlus,
   RefreshCw,
   Trash2,
+  X,
 } from "lucide-react";
 import { isPathInside, type FolderEntry, useDocStore } from "../store/docStore";
+import {
+  MAX_WORKSPACE_HISTORY,
+  WORKSPACE_HISTORY_KEY,
+  rememberWorkspace,
+} from "../workspaceHistory";
 import {
   createFile,
   createFolder,
@@ -47,6 +54,17 @@ function validateName(value: string): string {
     throw new Error(t("invalidName"));
   }
   return name;
+}
+
+function loadWorkspaceHistory(): string[] {
+  try {
+    const value = JSON.parse(localStorage.getItem(WORKSPACE_HISTORY_KEY) || "null");
+    return Array.isArray(value)
+      ? value.filter((path): path is string => typeof path === "string").slice(0, MAX_WORKSPACE_HISTORY)
+      : [];
+  } catch {
+    return [];
+  }
 }
 
 function TreeNode({
@@ -168,7 +186,7 @@ function TreeNode({
         className={`tree-node file${markdown ? "" : " disabled"}${
           activeId === entry.path ? " active" : ""
         }`}
-        style={{ paddingLeft: `${depth * 12 + 20}px` }}
+        style={{ paddingLeft: `${depth * 16 + 12}px` }}
         onClick={() => {
           if (!markdown || renaming) return;
           void openEntry();
@@ -204,7 +222,7 @@ function TreeNode({
     <div>
       <div
         className="tree-node folder"
-        style={{ paddingLeft: `${depth * 12}px` }}
+        style={{ paddingLeft: `${depth * 16 + 12}px` }}
         onClick={() => {
           if (!renaming) void toggleExpanded();
         }}
@@ -259,12 +277,16 @@ export function Sidebar() {
   const tree = useDocStore((state) => state.tree);
   const docs = useDocStore((state) => state.docs);
   const rootPath = useDocStore((state) => state.rootPath);
-  const setRoot = useDocStore((state) => state.setRoot);
-  const refreshTree = useDocStore((state) => state.refreshTree);
+  const workspaceRoots = useDocStore((state) => state.workspaceRoots);
+  const addRoot = useDocStore((state) => state.addRoot);
+  const removeRoot = useDocStore((state) => state.removeRoot);
   const openDoc = useDocStore((state) => state.openDoc);
   const reloadDoc = useDocStore((state) => state.reloadDoc);
   const removePath = useDocStore((state) => state.removePath);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
+  const [collapsedRoots, setCollapsedRoots] = useState<Set<string>>(() => new Set());
+  const [workspaceHistory, setWorkspaceHistory] = useState(loadWorkspaceHistory);
+  const [selectedHistory, setSelectedHistory] = useState<Set<string>>(() => new Set());
   const [refreshing, setRefreshing] = useState(false);
   const [refreshComplete, setRefreshComplete] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -305,13 +327,12 @@ export function Sidebar() {
   async function reload() {
     if (!rootPath) return;
     const cleanDocs = useDocStore.getState().docs.filter((doc) => !doc.dirty);
-    const [tree, loadedDocs] = await Promise.all([
-      loadDirectory(rootPath),
-      Promise.all(
-        cleanDocs.map(async (doc) => ({ id: doc.id, content: await openFile(doc.path) }))
-      ),
+    const roots = workspaceRoots.length ? workspaceRoots : [{ path: rootPath, tree }];
+    const [trees, loadedDocs] = await Promise.all([
+      Promise.all(roots.map(async (root) => ({ path: root.path, tree: await loadDirectory(root.path) }))),
+      Promise.all(cleanDocs.map(async (doc) => ({ id: doc.id, content: await openFile(doc.path) }))),
     ]);
-    refreshTree(tree);
+    for (const root of trees) useDocStore.getState().refreshRoot(root.path, root.tree);
     for (const doc of loadedDocs) reloadDoc(doc.id, doc.content);
   }
 
@@ -332,13 +353,48 @@ export function Sidebar() {
       const path = await pickFolder();
       if (!path) return;
       const nextTree = await loadDirectory(path);
-      if (path === rootPath) {
-        refreshTree(nextTree);
-        return;
-      }
-      if (docs.some((doc) => doc.dirty) && !window.confirm(t("discardUnsaved"))) return;
-      setRoot(path, nextTree);
+      addRoot(path, nextTree);
+      rememberPath(path);
     });
+  }
+
+  async function closeRoot(path: string) {
+    const hasDirtyDocs = docs.some((doc) => doc.dirty && isPathInside(doc.path, path));
+    if (hasDirtyDocs && !window.confirm(t("discardUnsaved"))) return;
+    removeRoot(path);
+  }
+
+  function toggleRoot(path: string) {
+    setCollapsedRoots((collapsed) => {
+      const next = new Set(collapsed);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
+      return next;
+    });
+  }
+
+  function rememberPath(path: string) {
+    setWorkspaceHistory((history) => {
+      const next = rememberWorkspace(history, path);
+      try {
+        localStorage.setItem(WORKSPACE_HISTORY_KEY, JSON.stringify(next));
+      } catch {
+        /* local storage is optional */
+      }
+      return next;
+    });
+  }
+
+  async function openHistory(paths: string[]) {
+    for (const path of paths) {
+      try {
+        addRoot(path, await loadDirectory(path));
+        rememberPath(path);
+      } catch (error) {
+        window.alert(String(error));
+      }
+    }
+    setSelectedHistory(new Set());
   }
 
   function promptName(label: string, initialValue: string): string | null {
@@ -437,12 +493,6 @@ export function Sidebar() {
           </button>
         </div>
       </div>
-      {rootPath && (
-        <div className="workspace-header" title={rootPath}>
-          <ChevronDown size={13} />
-          <span>{rootPath.split(/[/\\]/).filter(Boolean).pop() || rootPath}</span>
-        </div>
-      )}
       <div
         className="tree"
         role="tree"
@@ -453,16 +503,86 @@ export function Sidebar() {
           }
         }}
       >
-        {tree.map((entry) => (
-          <TreeNode
-            key={entry.path}
-            entry={entry}
-            reload={reload}
-            run={run}
-            showMenu={showMenu}
-          />
-        ))}
-        {!rootPath && (
+        {!rootPath && !workspaceRoots.length && workspaceHistory.length > 0 && (
+          <section className="workspace-history" aria-label={t("workspaceHistory")}>
+            <div className="workspace-history-header">
+              <span>{t("workspaceHistory")}</span>
+              <button
+                className="workspace-history-open"
+                disabled={!selectedHistory.size}
+                title={t("openSelectedWorkspaces")}
+                onClick={() => void openHistory([...selectedHistory])}
+              >
+                <FolderOpen size={13} />
+                {t("openSelectedWorkspaces")}
+              </button>
+            </div>
+            {workspaceHistory.map((path) => (
+              <label className="workspace-history-item" key={path} title={path}>
+                <input
+                  type="checkbox"
+                  checked={selectedHistory.has(path)}
+                  onChange={(event) =>
+                    setSelectedHistory((selected) => {
+                      const next = new Set(selected);
+                      if (event.target.checked) next.add(path);
+                      else next.delete(path);
+                      return next;
+                    })
+                  }
+                />
+                <span onDoubleClick={() => void openHistory([path])}>{path}</span>
+              </label>
+            ))}
+          </section>
+        )}
+        {(workspaceRoots.length ? workspaceRoots : rootPath ? [{ path: rootPath, tree }] : []).map(
+          (root) => (
+            <Fragment key={root.path}>
+              <div
+                className={`workspace-header${root.path === rootPath ? " active" : ""}`}
+                title={root.path}
+                onClick={() => addRoot(root.path, root.tree)}
+              >
+                <button
+                  className="workspace-toggle"
+                  title={t(collapsedRoots.has(root.path) ? "expandWorkspace" : "collapseWorkspace")}
+                  aria-label={t(collapsedRoots.has(root.path) ? "expandWorkspace" : "collapseWorkspace")}
+                  aria-expanded={!collapsedRoots.has(root.path)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    toggleRoot(root.path);
+                  }}
+                >
+                  {collapsedRoots.has(root.path) ? <ChevronRight size={13} /> : <ChevronDown size={13} />}
+                </button>
+                <span>{root.path.split(/[/\\]/).filter(Boolean).pop() || root.path}</span>
+                <button
+                  className="workspace-close"
+                  title={t("closeWorkspace")}
+                  aria-label={t("closeWorkspace")}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    void closeRoot(root.path);
+                  }}
+                >
+                  <X size={12} />
+                </button>
+              </div>
+              {!collapsedRoots.has(root.path) && root.tree.map((entry) => (
+                <TreeNode
+                  key={entry.path}
+                  entry={entry}
+                  depth={1}
+                  reload={reload}
+                  run={run}
+                  showMenu={showMenu}
+                />
+              ))}
+            </Fragment>
+          )
+        )}
+        {!rootPath && !workspaceRoots.length && (
           <div className="sidebar-empty">
             <FolderOpen size={22} />
             <span>{t("noFolderOpen")}</span>

@@ -68,6 +68,17 @@ fn scope_document(app: AppHandle, path: String) -> Result<(), String> {
 }
 
 #[tauri::command]
+fn scope_directory(app: AppHandle, path: String) -> Result<(), String> {
+    let directory = Path::new(&path);
+    if !directory.is_dir() {
+        return Err("not a directory".into());
+    }
+    app.fs_scope()
+        .allow_directory(directory, true)
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn startup_document(app: AppHandle) -> Option<OpenDocumentPayload> {
     std::env::args_os()
         .skip(1)
@@ -92,7 +103,12 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .manage(Arc::new(Mutex::new(DirtyState::default())))
-        .invoke_handler(tauri::generate_handler![scope_document, startup_document, set_dirty_paths])
+        .invoke_handler(tauri::generate_handler![
+            scope_document,
+            scope_directory,
+            startup_document,
+            set_dirty_paths
+        ])
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
                 let state = window.state::<Arc<Mutex<DirtyState>>>();

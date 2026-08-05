@@ -15,6 +15,11 @@ export interface FolderEntry {
   children?: FolderEntry[];
 }
 
+export interface WorkspaceRoot {
+  path: string;
+  tree: FolderEntry[];
+}
+
 export interface PreviewPane {
   id: string;
   tabs: string[];
@@ -31,6 +36,7 @@ interface DocState {
   activeId: string | null;
   rootPath: string | null;
   tree: FolderEntry[];
+  workspaceRoots: WorkspaceRoot[];
   previewPanes: PreviewPane[];
   focusedPane: number;
   pendingAnchor: PendingAnchor | null;
@@ -43,6 +49,9 @@ interface DocState {
   replacePath: (oldPath: string, newPath: string) => void;
   removePath: (path: string) => void;
   setRoot: (path: string, tree: FolderEntry[]) => void;
+  addRoot: (path: string, tree: FolderEntry[]) => void;
+  removeRoot: (path: string) => void;
+  refreshRoot: (path: string, tree: FolderEntry[]) => void;
   refreshTree: (tree: FolderEntry[]) => void;
   setTreeChildren: (path: string, children: FolderEntry[]) => void;
   splitPreview: (docId: string) => void;
@@ -100,6 +109,7 @@ export const useDocStore = create<DocState>((set) => ({
   activeId: null,
   rootPath: null,
   tree: [],
+  workspaceRoots: [],
   previewPanes: [],
   focusedPane: 0,
   pendingAnchor: null,
@@ -223,6 +233,7 @@ export const useDocStore = create<DocState>((set) => ({
     set({
       rootPath: path,
       tree,
+      workspaceRoots: [{ path, tree }],
       docs: [],
       activeId: null,
       previewPanes: [],
@@ -230,7 +241,55 @@ export const useDocStore = create<DocState>((set) => ({
       pendingAnchor: null,
     }),
 
-  refreshTree: (tree) => set({ tree }),
+  addRoot: (path, tree) =>
+    set((state) => {
+      const existing = state.workspaceRoots.findIndex((root) => root.path === path);
+      const workspaceRoots = [...state.workspaceRoots];
+      if (existing >= 0) workspaceRoots[existing] = { path, tree };
+      else workspaceRoots.push({ path, tree });
+      return { rootPath: path, tree, workspaceRoots };
+    }),
+
+  removeRoot: (path) =>
+    set((state) => {
+      const workspaceRoots = state.workspaceRoots.filter((root) => root.path !== path);
+      const next = workspaceRoots[workspaceRoots.length - 1];
+      const removed = new Set(state.docs.filter((doc) => isPathInside(doc.path, path)).map((doc) => doc.id));
+      const docs = state.docs.filter((doc) => !removed.has(doc.id));
+      const previewPanes = state.previewPanes.map((pane) => {
+        let nextPane = pane;
+        for (const id of removed) nextPane = withTabClosed(nextPane, id);
+        return nextPane;
+      });
+      const activeId = removed.has(state.activeId ?? "") ? (docs[0]?.id ?? null) : state.activeId;
+      return {
+        workspaceRoots,
+        rootPath: next?.path ?? null,
+        tree: next?.tree ?? [],
+        docs,
+        previewPanes,
+        activeId,
+        pendingAnchor: state.pendingAnchor && removed.has(state.pendingAnchor.docId)
+          ? null
+          : state.pendingAnchor,
+      };
+    }),
+
+  refreshRoot: (path, tree) =>
+    set((state) => ({
+      tree: state.rootPath === path ? tree : state.tree,
+      workspaceRoots: state.workspaceRoots.map((root) =>
+        root.path === path ? { ...root, tree } : root
+      ),
+    })),
+
+  refreshTree: (tree) =>
+    set((state) => ({
+      tree,
+      workspaceRoots: state.rootPath
+        ? state.workspaceRoots.map((root) => (root.path === state.rootPath ? { ...root, tree } : root))
+        : state.workspaceRoots,
+    })),
 
   setTreeChildren: (path, children) =>
     set((state) => {
@@ -242,7 +301,14 @@ export const useDocStore = create<DocState>((set) => ({
               ? { ...entry, children: update(entry.children) }
               : entry
         );
-      return { tree: update(state.tree) };
+      const tree = update(state.tree);
+      return {
+        tree,
+        workspaceRoots: state.workspaceRoots.map((root) => ({
+          ...root,
+          tree: root.path === path ? root.tree : update(root.tree),
+        })),
+      };
     }),
 
   splitPreview: (docId) =>
