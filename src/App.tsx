@@ -19,6 +19,7 @@ import {
   PanelRight,
   PanelRightClose,
   Save,
+  Terminal,
 } from "lucide-react";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -129,6 +130,21 @@ function App() {
   const moveTabToPane = useDocStore((state) => state.moveTabToPane);
   const openDoc = useDocStore((state) => state.openDoc);
   const markClean = useDocStore((state) => state.markClean);
+  const [savePulse, setSavePulse] = useState(0);
+  const savePulseTimer = useRef<number | null>(null);
+
+  // Re-trigger the one-shot "saved" pulse on the save button.
+  function triggerSavePulse() {
+    setSavePulse((n) => n + 1);
+    if (savePulseTimer.current !== null) window.clearTimeout(savePulseTimer.current);
+    savePulseTimer.current = window.setTimeout(() => setSavePulse(0), 650);
+  }
+  useEffect(
+    () => () => {
+      if (savePulseTimer.current !== null) window.clearTimeout(savePulseTimer.current);
+    },
+    []
+  );
   const doc = docs.find((item) => item.id === activeId);
   const hasDirtyDocs = docs.some((item) => item.dirty);
   const docContent = typeof doc?.content === "string" ? doc.content : "";
@@ -264,6 +280,7 @@ function App() {
     try {
       await saveFile(doc.path, content);
       markClean(doc.id, content);
+      triggerSavePulse();
     } catch (error) {
       window.alert(t("saveFailed", { name: doc.name, error: String(error) }));
     }
@@ -471,6 +488,12 @@ function App() {
     <div className="app">
       <header className="app-bar">
         <div className="document-bar">
+          <div className="brand">
+            <span className="brand-mark">
+              <Terminal size={14} />
+            </span>
+            <span className="brand-name">{t("brand")}</span>
+          </div>
           <div className="breadcrumb" title={doc?.path || rootPath || ""}>
             <FileText size={15} />
             <span>{rootName || t("noWorkspace")}</span>
@@ -500,13 +523,15 @@ function App() {
               })}
             </div>
             <button
-              className="save-button"
+              key={savePulse || "idle"}
+              className={`save-button${savePulse ? " saved" : ""}`}
               title={t("saveDocument")}
               aria-label={t("saveDocument")}
               disabled={!doc || !doc.dirty}
               onClick={() => void saveActiveDoc()}
             >
-              <Save size={15} />
+              <Save size={14} />
+              <span className="save-label">{t("saveDocument")}</span>
             </button>
           </div>
         </div>
@@ -632,6 +657,9 @@ function App() {
               </div>
             ) : (
               <div className="workspace-empty">
+                <div className="empty-mark">
+                  <Terminal size={22} />
+                </div>
                 <h1>{rootPath ? t("noDocument") : t("openDocument")}</h1>
                 <p>{rootPath ? rootName : t("brand")}</p>
                 {!rootPath && (
