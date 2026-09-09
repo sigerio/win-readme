@@ -9,6 +9,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => {
+    if (message.type() === 'error' && message.text().startsWith('Warning:')) errors.push(message.text());
+  });
   page.on('dialog', dialog => dialog.dismiss());
   const check = async (label, test) => {
     await test();
@@ -70,7 +73,9 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       assert.equal(await page.locator('.markdown-body mark, .markdown-body .wr-text-red').count(), 0);
       await editor.evaluate(el => { const start = el.value.indexOf('world'); el.setSelectionRange(start, start + 5); });
       const rect = await editor.boundingBox();
-      await editor.dispatchEvent('contextmenu', { clientX: rect.x + 40, clientY: rect.y + 40, button: 2 });
+      await editor.evaluate((el, rect) => el.dispatchEvent(new MouseEvent('contextmenu', {
+        bubbles: true, cancelable: true, clientX: rect.x + 40, clientY: rect.y + 40, button: 2,
+      })), rect);
       await page.locator('.color-section').first().locator('button').first().click();
       await settle();
       assert.equal(await page.locator('.markdown-body .wr-text-red').textContent(), 'world');
