@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { createPortal } from "react-dom";
 import { Columns2, FileText, X } from "lucide-react";
 import { useDocStore } from "../store/docStore";
 import { t } from "../i18n";
@@ -178,7 +179,7 @@ export function Tabs({
           </div>
         ))}
       </div>
-      {menu && (
+      {menu && createPortal(
         <div
           ref={menuRef}
           className="context-menu"
@@ -230,7 +231,8 @@ export function Tabs({
               </button>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

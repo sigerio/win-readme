@@ -5,6 +5,7 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import {
   ChevronDown,
   ChevronRight,
@@ -543,7 +544,10 @@ export function Sidebar() {
               <div
                 className={`workspace-header${root.path === rootPath ? " active" : ""}`}
                 title={root.path}
-                onClick={() => addRoot(root.path, root.tree)}
+                onClick={() => {
+                  addRoot(root.path, root.tree);
+                  toggleRoot(root.path);
+                }}
               >
                 <button
                   className="workspace-toggle"
@@ -593,7 +597,7 @@ export function Sidebar() {
           </div>
         )}
       </div>
-      {menu && (
+      {menu && createPortal(
         <div
           ref={menuRef}
           className="context-menu"
@@ -624,7 +628,8 @@ export function Sidebar() {
               </button>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </aside>
   );

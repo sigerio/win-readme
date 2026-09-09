@@ -25,6 +25,7 @@ Browser coverage includes:
 8. Save failure preserves dirty content, Ctrl+S retries, and saved annotation content renders after reopening. **Filesystem IPC is simulated in memory.**
 9. Dark code-block appearance and document empty-state file/folder actions. **Native file dialogs are simulated and cancelled.**
 10. No uncaught browser page errors.
+11. Workspace-root and nested-folder name clicks toggle expansion; root arrow and keyboard activation toggle once. Tab, annotation and file-tree menu bounds are checked against the invocation coordinates. Menus render in the document body to avoid offsets and clipping from animated workspace containers.
 
 These checks cover frontend interaction in Chrome, not the packaged Windows WebView's native dialogs, actual disk writes, OS zoom, or installation. The native backend was not changed.
 

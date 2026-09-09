@@ -7,6 +7,7 @@ import {
   type RefObject,
   type UIEventHandler,
 } from "react";
+import { createPortal } from "react-dom";
 import { useDocStore } from "../store/docStore";
 import { applyColor, BG_COLORS, TEXT_COLORS } from "../markdown/colors";
 import { t } from "../i18n";
@@ -112,7 +113,7 @@ export function Editor({ onScroll, scrollRef }: EditorProps) {
         autoCorrect="off"
         wrap="off"
       />
-      {menu && (
+      {menu && createPortal(
         <div
           ref={menuRef}
           className="context-menu color-menu"
@@ -160,7 +161,8 @@ export function Editor({ onScroll, scrollRef }: EditorProps) {
           <button role="menuitem" onClick={() => apply(null, null)}>
             {t("clearColor")}
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

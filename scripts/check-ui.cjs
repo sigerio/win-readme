@@ -19,6 +19,12 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
   };
   const settle = () => page.waitForTimeout(650);
   const mode = index => page.locator('.view-switcher button').nth(index).click();
+  const menuAt = async (x, y) => {
+    await page.waitForTimeout(250);
+    const box = await page.locator('.context-menu').boundingBox();
+    assert(box && Math.abs(box.x - x) < 2 && Math.abs(box.y - y) < 2, `menu follows pointer ${x},${y}: ${JSON.stringify(box)}`);
+    assert(box.x >= 0 && box.y >= 0 && box.x + box.width <= page.viewportSize().width && box.y + box.height <= page.viewportSize().height);
+  };
   const seed = () => page.evaluate(async () => {
     const { useDocStore } = await import('/src/store/docStore.ts');
     window.reviewStore = useDocStore;
@@ -53,6 +59,32 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await page.locator('.app').waitFor();
     await seed();
     await settle();
+    await check('root and nested folders toggle by name; arrows toggle only once', async () => {
+      const root = page.locator('.workspace-header');
+      await root.locator('span').click();
+      assert.equal(await root.locator('.workspace-toggle').getAttribute('aria-expanded'), 'false');
+      assert.equal(await page.locator('.tree-node').count(), 0);
+      await root.locator('span').click();
+      assert.equal(await root.locator('.workspace-toggle').getAttribute('aria-expanded'), 'true');
+      await root.locator('.workspace-toggle').click();
+      assert.equal(await root.locator('.workspace-toggle').getAttribute('aria-expanded'), 'false');
+      await root.locator('.workspace-toggle').press('Enter');
+      assert.equal(await root.locator('.workspace-toggle').getAttribute('aria-expanded'), 'true');
+      await page.evaluate(() => {
+        const s = window.reviewStore.getState();
+        s.refreshRoot('/review', [...s.tree, { name: 'nested', path: '/review/nested', isDirectory: true, children: [{ name: 'child.md', path: '/review/nested/child.md', isDirectory: false }] }]);
+      });
+      const folder = page.locator('.tree-node.folder');
+      await folder.locator('span').click();
+      assert.equal(await folder.getAttribute('aria-expanded'), 'true');
+      assert(await page.locator('.tree-node').filter({ hasText: 'child.md' }).isVisible());
+      await folder.locator('span').click();
+      assert.equal(await folder.getAttribute('aria-expanded'), 'false');
+      await folder.click({ button: 'right', position: { x: 50, y: 14 } });
+      const rect = await folder.boundingBox();
+      await menuAt(rect.x + 50, rect.y + 14);
+      await page.keyboard.press('Escape');
+    });
     await check('text annotation, recolor, clear and focus', async () => {
       const editor = page.locator('textarea.editor');
       await editor.evaluate(el => { el.focus(); const start = el.value.indexOf('world'); el.setSelectionRange(start, start + 5); });
@@ -76,6 +108,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       await editor.evaluate((el, rect) => el.dispatchEvent(new MouseEvent('contextmenu', {
         bubbles: true, cancelable: true, clientX: rect.x + 40, clientY: rect.y + 40, button: 2,
       })), rect);
+      await menuAt(rect.x + 40, rect.y + 40);
       await page.locator('.color-section').first().locator('button').first().click();
       await settle();
       assert.equal(await page.locator('.markdown-body .wr-text-red').textContent(), 'world');
@@ -97,7 +130,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
     await check('preview split, resize, cross-pane drag and close split', async () => {
       await mode(2);
       await settle();
-      await page.locator('.tab').filter({ hasText: 'README.md' }).click({ button: 'right' });
+      const tab = page.locator('.tab').filter({ hasText: 'README.md' });
+      const box = await tab.boundingBox();
+      await tab.click({ button: 'right', position: { x: 40, y: 16 } });
+      await menuAt(box.x + 40, box.y + 16);
       await page.getByRole('menuitem', { name: '向右拆分' }).click();
       await settle();
       assert.equal(await page.locator('.preview-pane').count(), 2);
@@ -108,7 +144,10 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
       assert(moved.panes[0].tabs.includes('/review/README.md'));
       assert.equal(moved.panes[1].tabs.length, 0);
       assert(moved.docs.find(d => d.name === 'README.md').dirty);
-      await page.locator('.tab').filter({ hasText: 'README.md' }).click({ button: 'right' });
+      const movedTab = page.locator('.tab').filter({ hasText: 'README.md' });
+      const movedBox = await movedTab.boundingBox();
+      await movedTab.click({ button: 'right', position: { x: 40, y: 16 } });
+      await menuAt(movedBox.x + 40, movedBox.y + 16);
       await page.getByRole('menuitem', { name: '关闭拆分' }).click();
       assert.equal(await page.locator('.preview-pane').count(), 1);
     });
