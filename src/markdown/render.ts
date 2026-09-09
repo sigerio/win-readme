@@ -117,7 +117,7 @@ const processor = unified()
   // and Shiki would otherwise consume it as a code block.
   .use(rehypeKatex)
   .use(rehypeShiki, {
-    theme: "github-light",
+    theme: "github-dark",
     langs: SHIKI_LANGS,
     fallbackLanguage: "plaintext",
   })

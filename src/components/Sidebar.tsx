@@ -459,6 +459,7 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
+        <span className="section-label">{t("explorer")}</span>
         <div className="sidebar-actions">
           <button
             title={t("newFile")}
@@ -586,6 +587,9 @@ export function Sidebar() {
           <div className="sidebar-empty">
             <FolderOpen size={22} />
             <span>{t("noFolderOpen")}</span>
+            <button className="sidebar-open" onClick={() => void openFolder()}>
+              {t("openFolder")}
+            </button>
           </div>
         )}
       </div>

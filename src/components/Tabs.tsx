@@ -106,6 +106,7 @@ export function Tabs({
             aria-selected={doc.id === rowActiveId}
             tabIndex={doc.id === rowActiveId ? 0 : -1}
             data-doc-id={doc.id}
+            title={doc.path}
             draggable={canDrag}
             onDragStart={canDrag ? (e) => {
               e.dataTransfer.setData(TAB_DRAG_TYPE, doc.id);

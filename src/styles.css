@@ -5,6 +5,7 @@
    ============================================================ */
 
 :root {
+  color-scheme: dark;
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   font-synthesis: none;
 
@@ -147,33 +148,27 @@ button:active {
   user-select: none;
 }
 
-/* hairline phosphor signal along the very top — slowly sweeps across */
+/* Quiet chrome; keep the accent for actions and selected items. */
+.app-bar,
+.sidebar,
+.tabs,
+.outline-pane,
+.pane-header,
+.status-bar {
+  --muted: #a0aab8;
+}
+
+.pane-header,
+.status-bar {
+  --faint: #8995a5;
+}
+
 .app-bar::before {
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
   content: "";
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--accent) 30%,
-    var(--accent-bright) 50%,
-    var(--accent) 70%,
-    transparent 100%
-  );
-  background-size: 220% 100%;
-  opacity: 0.9;
-  animation: signal-sweep 7s ease-in-out infinite;
-}
-
-@keyframes signal-sweep {
-  0%,
-  100% {
-    background-position: 0% 0;
-  }
-  50% {
-    background-position: 100% 0;
-  }
+  background: var(--line-strong);
 }
 
 /* workspace panes rise gently into place on load */
@@ -214,50 +209,6 @@ button:active {
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* the status dot breathes — a living "system ok" signal */
-.status-dot {
-  animation: dot-breathe 3.2s ease-in-out infinite;
-}
-
-@keyframes dot-breathe {
-  0%,
-  100% {
-    box-shadow: 0 0 5px rgba(51, 214, 166, 0.45);
-  }
-  50% {
-    box-shadow: 0 0 13px rgba(51, 214, 166, 0.95);
-  }
-}
-
-.status-dot.dirty {
-  animation-name: dot-breathe-dirty;
-}
-
-@keyframes dot-breathe-dirty {
-  0%,
-  100% {
-    box-shadow: 0 0 5px rgba(240, 178, 90, 0.45);
-  }
-  50% {
-    box-shadow: 0 0 13px rgba(240, 178, 90, 0.95);
-  }
-}
-
-/* soft halo behind the focused editor */
-.editor:focus {
-  animation: caret-halo 3.6s ease-in-out infinite;
-}
-
-@keyframes caret-halo {
-  0%,
-  100% {
-    box-shadow: inset 2px 0 0 var(--accent), inset 0 0 0 rgba(51, 214, 166, 0);
-  }
-  50% {
-    box-shadow: inset 2px 0 0 var(--accent), inset 20px 0 44px -20px rgba(51, 214, 166, 0.09);
   }
 }
 
@@ -319,7 +270,7 @@ button:active {
 
 .breadcrumb svg {
   flex: 0 0 auto;
-  color: var(--accent);
+  color: var(--muted);
 }
 
 .breadcrumb span,
@@ -338,7 +289,7 @@ button:active {
 
 .breadcrumb-separator {
   flex: 0 0 auto;
-  color: var(--faint);
+  color: #8995a5;
 }
 
 /* ============ BRAND MARK ============ */
@@ -355,21 +306,9 @@ button:active {
   height: 26px;
   display: grid;
   place-items: center;
-  color: var(--accent-ink);
-  background: var(--accent);
+  color: var(--accent-bright);
+  background: #18352d;
   border-radius: 8px;
-  box-shadow: 0 0 16px rgba(51, 214, 166, 0.35);
-  animation: brand-glow 5s ease-in-out infinite;
-}
-
-@keyframes brand-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 12px rgba(51, 214, 166, 0.28);
-  }
-  50% {
-    box-shadow: 0 0 24px rgba(51, 214, 166, 0.5);
-  }
 }
 
 .brand-name {
@@ -425,8 +364,8 @@ button:active {
 }
 
 .view-switcher button.active {
-  color: var(--accent-ink);
-  background: var(--accent);
+  color: #72e7c3;
+  background: #214239;
   font-weight: 700;
 }
 
@@ -553,16 +492,20 @@ button:active {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 8px;
   padding: 0 12px;
   border-bottom: 1px solid var(--line);
 }
 
 .section-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -570,6 +513,7 @@ button:active {
 
 .sidebar-actions {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 3px;
 }
@@ -831,8 +775,23 @@ button:active {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--faint);
+  color: var(--muted);
   font-size: 12px;
+}
+
+.sidebar-open {
+  margin-top: 6px;
+  padding: 7px 12px;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.sidebar-open:hover {
+  border-color: var(--accent-line);
+  color: var(--accent-bright);
 }
 
 /* ============ CONTEXT / COLOR MENUS ============ */
@@ -1005,7 +964,7 @@ button:active {
 
 .tab-icon {
   flex: 0 0 auto;
-  color: var(--faint);
+  color: #8995a5;
 }
 
 .tab.active .tab-icon {
@@ -1227,9 +1186,9 @@ button:active {
   background: var(--surface);
   border-bottom: 1px solid var(--line);
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -1275,6 +1234,7 @@ button:active {
 }
 
 .preview-scroll {
+  container-type: inline-size;
   min-width: 0;
   min-height: 0;
   flex: 1;
@@ -1329,9 +1289,10 @@ button:active {
   width: min(100%, 780px);
   min-height: 100%;
   margin: 0 auto;
-  padding: 52px 56px 90px;
+  padding: 32px 24px 72px;
+  padding-inline: clamp(18px, 5cqi, 48px);
   color: #c3cad5;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.78;
 }
 
@@ -1423,6 +1384,10 @@ button:active {
 .markdown-body .wr-bg-green { background: rgba(74, 222, 128, 0.18); }
 .markdown-body .wr-bg-blue { background: rgba(98, 168, 245, 0.2); }
 .markdown-body .wr-bg-pink { background: rgba(240, 126, 168, 0.2); }
+
+.markdown-body mark {
+  color: inherit;
+}
 
 .markdown-body pre {
   padding: 18px;
@@ -1538,6 +1503,8 @@ button:active {
   align-items: center;
   justify-content: center;
   gap: 12px;
+  padding: 32px;
+  text-align: center;
   color: var(--muted);
   background: var(--paper);
 }
@@ -1575,11 +1542,18 @@ button:active {
 }
 
 .workspace-empty p {
-  color: var(--faint);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  max-width: 440px;
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.empty-tip {
+  margin-top: 12px;
+  max-width: 440px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 .empty-action {
@@ -1637,12 +1611,10 @@ button:active {
   height: 7px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 8px rgba(51, 214, 166, 0.6);
 }
 
 .status-dot.dirty {
   background: var(--warning);
-  box-shadow: 0 0 8px rgba(240, 178, 90, 0.6);
 }
 
 .status-secondary {
@@ -1667,8 +1639,4 @@ button:active {
     padding: 0;
   }
 
-  .markdown-body {
-    padding-right: 32px;
-    padding-left: 32px;
-  }
 }

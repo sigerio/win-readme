@@ -525,7 +525,7 @@ function App() {
             <button
               key={savePulse || "idle"}
               className={`save-button${savePulse ? " saved" : ""}`}
-              title={t("saveDocument")}
+              title={`${t("saveDocument")} (Ctrl+S)`}
               aria-label={t("saveDocument")}
               disabled={!doc || !doc.dirty}
               onClick={() => void saveActiveDoc()}
@@ -661,13 +661,12 @@ function App() {
                   <Terminal size={22} />
                 </div>
                 <h1>{rootPath ? t("noDocument") : t("openDocument")}</h1>
-                <p>{rootPath ? rootName : t("brand")}</p>
-                {!rootPath && (
-                  <button className="empty-action" onClick={() => void openDocument()}>
-                    <FileText size={15} />
-                    {t("openFile")}
-                  </button>
-                )}
+                <p>{t(rootPath ? "chooseDocumentHint" : "welcomeHint")}</p>
+                <button className="empty-action" onClick={() => void openDocument()}>
+                  <FileText size={15} />
+                  {t("openFile")}
+                </button>
+                <span className="empty-tip">{t("workspaceHint")}</span>
               </div>
             )}
           </ErrorBoundary>
